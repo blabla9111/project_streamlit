@@ -34,7 +34,7 @@ def train_model(data):
     scaler = load_scaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
-    print("SSSSSSSSSS")
+    # print("SSSSSSSSSS")
     # Train model
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train_scaled, y_train)
@@ -127,7 +127,7 @@ def main():
     """)
 
     # Feature importance
-    st.subheader('Bажности признаков для данного прогноза')
+    st.subheader('Bажности признаков для прогноза')
 
     # Get feature importances
     importances = model.feature_importances_
