@@ -10,8 +10,8 @@ from sklearn.preprocessing import RobustScaler
 
 @st.cache_data
 def load_data():
-    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
-    data = pd.read_csv(url, sep=';')
+    url = "./winequalityN.csv"
+    data = pd.read_csv(url, sep=',')
     return data
 
 def load_scaler():
@@ -34,8 +34,7 @@ def train_model(data):
     scaler = load_scaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
-    # print("SSSSSSSSSS")
-    # Train model
+
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train_scaled, y_train)
 
@@ -57,16 +56,19 @@ def main():
 Отрегулируйте ползунки, чтобы ввести параметры вина и увидеть прогнозируемое качество.
     """)
 
-    # Load data
     data = load_data()
 
-    # Train model
     model, scaler, mse = train_model(data)
     st.sidebar.title("🍷 Прогноз качества вина")
     # Sidebar with user input
     st.sidebar.header('Входные параметры вина')
 
     def user_input_features():
+        wine_type = st.sidebar.select_slider(
+            "Wine type",
+            options=[0, 1],
+            format_func=lambda x: "White" if x == 0 else "Red"
+        )
         fixed_acidity = st.sidebar.slider('Fixed acidity', float(data['fixed acidity'].min(
         )), float(data['fixed acidity'].max()), float(data['fixed acidity'].mean()))
         volatile_acidity = st.sidebar.slider('Volatile acidity', float(data['volatile acidity'].min(
@@ -91,6 +93,7 @@ def main():
             data['alcohol'].max()), float(data['alcohol'].mean()))
 
         features = pd.DataFrame({
+            'type': [wine_type],
             'fixed acidity': [fixed_acidity],
             'volatile acidity': [volatile_acidity],
             'citric acid': [citric_acid],
