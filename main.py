@@ -6,10 +6,7 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
-
-# Load the wine quality dataset
-
+from sklearn.preprocessing import RobustScaler
 
 @st.cache_data
 def load_data():
@@ -17,7 +14,12 @@ def load_data():
     data = pd.read_csv(url, sep=';')
     return data
 
-# Train the model
+def load_scaler():
+    import joblib
+    scaler = RobustScaler()
+    joblib.dump(scaler, 'scaler.save')
+    return joblib.load('scaler.save')
+
 
 
 @st.cache_resource
@@ -28,9 +30,8 @@ def train_model(data):
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
-
-    # Scale features
-    scaler = StandardScaler()
+    
+    scaler = load_scaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     print("SSSSSSSSSS")
@@ -43,8 +44,6 @@ def train_model(data):
     mse = mean_squared_error(y_test, y_pred)
 
     return model, scaler, mse
-
-# Main function
 
 
 def main():
